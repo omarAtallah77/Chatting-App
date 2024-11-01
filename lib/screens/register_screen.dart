@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'firebase/auth_service.dart';
+import '../firebase/auth_service.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController _firstNameController = TextEditingController();
@@ -9,7 +11,7 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-
+bool _saving  = false ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,61 +21,65 @@ class RegisterScreen extends StatelessWidget {
         title: Text("Register", style: TextStyle(color: Colors.amber)),
         backgroundColor: Colors.black87,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // First Name input field
-                _buildTextField(_firstNameController, "First Name"),
-                SizedBox(height: 20),
-
-                // Last Name input field
-                _buildTextField(_lastNameController, "Last Name"),
-                SizedBox(height: 20),
-
-                // Email input field
-                _buildTextField(_emailController, "Email"),
-                SizedBox(height: 20),
-
-                // Password input field
-                _buildTextField(_passwordController, "Password", isPassword: true),
-                SizedBox(height: 20),
-
-                // Confirm Password input field
-                _buildTextField(_confirmPasswordController, "Confirm Password", isPassword: true),
-                SizedBox(height: 20),
-
-                // Phone input field
-                _buildTextField(_phoneController, "Phone", keyboardType: TextInputType.phone),
-                SizedBox(height: 20),
-
-                // Register button
-                ElevatedButton(
-                  onPressed: () => _register(context), // Call the register method
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+      body: ModalProgressHUD(
+          inAsyncCall: _saving,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // First Name input field
+                  _buildTextField(_firstNameController, "First Name"),
+                  SizedBox(height: 20),
+        
+                  // Last Name input field
+                  _buildTextField(_lastNameController, "Last Name"),
+                  SizedBox(height: 20),
+        
+                  // Email input field
+                  _buildTextField(_emailController, "Email"),
+                  SizedBox(height: 20),
+        
+                  // Password input field
+                  _buildTextField(_passwordController, "Password", isPassword: true),
+                  SizedBox(height: 20),
+        
+                  // Confirm Password input field
+                  _buildTextField(_confirmPasswordController, "Confirm Password", isPassword: true),
+                  SizedBox(height: 20),
+        
+                  // Phone input field
+                  _buildTextField(_phoneController, "Phone", keyboardType: TextInputType.phone),
+                  SizedBox(height: 20),
+        
+                  // Register button
+                  ElevatedButton(
+                    onPressed: () {_register(context);
+                      setState ()=> _saving = true ; } , // Call the register method
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
+                    child: Text("Register", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
-                  child: Text("Register", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
-                SizedBox(height: 10),
-
-                // Link to Sign In
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/signin');
-                  },
-                  child: Text("Already have an account? Sign in here", style: TextStyle(color: Colors.amber)),
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(height: 10),
+        
+                  // Link to Sign In
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed('/signin');
+                    },
+                    child: Text("Already have an account? Sign in here", style: TextStyle(color: Colors.amber)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -132,6 +138,7 @@ class RegisterScreen extends StatelessWidget {
     if (user != null) {
       // Registration successful, navigate to the home screen
       Navigator.of(context).pushReplacementNamed('/home');
+       setState ()=> _saving = false ;
     } else {
       // Handle error (show a message to the user)
       ScaffoldMessenger.of(context).showSnackBar(

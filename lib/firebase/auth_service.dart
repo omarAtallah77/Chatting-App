@@ -10,8 +10,17 @@ class AuthService {
       String firstName, String lastName, String email, String password, String phone) async {
     try {
       // Create a new user with email and password
-      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      User? user = result.user;
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password);
+      User? user = userCredential.user;
+
+      // save user info in a doc
+      _firestore.collection("Users").doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid ,
+        'email': email ,
+
+      },);
 
       // Check if user is created
       if (user != null) {
@@ -37,8 +46,15 @@ class AuthService {
   Future<User?> loginWithEmailAndPassword(String email, String password) async {
     try {
       // Sign in the user with email and password
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return result.user; // Return the user
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return userCredential.user; // Return the user
+
+
+      _firestore.collection("Users").doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid ,
+        'email': email
+      },);
+
     } catch (e) {
       // Print the error message for debugging
       print("Login error: ${e.toString()}");

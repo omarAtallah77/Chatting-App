@@ -1,4 +1,4 @@
-import 'package:untitled/user_model.dart';
+import 'package:untitled/models/user_model.dart';
 
 class model_chat {
 String id  ;
