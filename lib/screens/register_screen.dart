@@ -15,70 +15,74 @@ bool _saving  = false ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Register", style: TextStyle(color: Colors.amber)),
-        backgroundColor: Colors.black87,
+        title: Text("Register", style: TextStyle(color: Colors.green)),
+        backgroundColor: Colors.white,
       ),
-      body: ModalProgressHUD(
-          inAsyncCall: _saving,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // First Name input field
-                  _buildTextField(_firstNameController, "First Name"),
-                  SizedBox(height: 20),
-        
-                  // Last Name input field
-                  _buildTextField(_lastNameController, "Last Name"),
-                  SizedBox(height: 20),
-        
-                  // Email input field
-                  _buildTextField(_emailController, "Email"),
-                  SizedBox(height: 20),
-        
-                  // Password input field
-                  _buildTextField(_passwordController, "Password", isPassword: true),
-                  SizedBox(height: 20),
-        
-                  // Confirm Password input field
-                  _buildTextField(_confirmPasswordController, "Confirm Password", isPassword: true),
-                  SizedBox(height: 20),
-        
-                  // Phone input field
-                  _buildTextField(_phoneController, "Phone", keyboardType: TextInputType.phone),
-                  SizedBox(height: 20),
-        
-                  // Register button
-                  ElevatedButton(
-                    onPressed: () {_register(context);
-                      setState ()=> _saving = true ; } , // Call the register method
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+      body: Container(
+        margin: EdgeInsets.only(top: 20.0),
+        child: ModalProgressHUD(
+            inAsyncCall: _saving,
+
+          child: Padding(
+            padding: const EdgeInsets.only(top: 23.0 , bottom: 16.0 , right: 16.0 , left: 16.0),
+            child: ListView(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20),
+                    _buildTextField(_firstNameController, "First Name"),
+                    SizedBox(height: 20),
+
+                    // Last Name input field
+                    _buildTextField(_lastNameController, "Last Name"),
+                    SizedBox(height: 20),
+
+                    // Email input field
+                    _buildTextField(_emailController, "Email"),
+                    SizedBox(height: 20),
+
+                    // Password input field
+                    _buildTextField(_passwordController, "Password", isPassword: true),
+                    SizedBox(height: 20),
+
+                    // Confirm Password input field
+                    _buildTextField(_confirmPasswordController, "Confirm Password", isPassword: true),
+                    SizedBox(height: 20),
+
+                    // Phone input field
+                    _buildTextField(_phoneController, "Phone", keyboardType: TextInputType.phone),
+                    SizedBox(height: 20),
+
+                    // Register button
+                    ElevatedButton(
+                      onPressed: () {_register(context);
+                        setState ()=> _saving = true ; } , // Call the register method
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
+                      child: Text("Register", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
-                    child: Text("Register", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                  SizedBox(height: 10),
-        
-                  // Link to Sign In
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed('/signin');
-                    },
-                    child: Text("Already have an account? Sign in here", style: TextStyle(color: Colors.amber)),
-                  ),
-                ],
-              ),
-            ],
+                    SizedBox(height: 10),
+
+                    // Link to Sign In
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/signin');
+                      },
+                      child: Text("Already have an account? Sign in here", style: TextStyle(color: Colors.green)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -86,26 +90,26 @@ bool _saving  = false ;
   }
 
   // Method to build text fields
-  Widget _buildTextField(TextEditingController controller, String label, {bool isPassword = false, TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(TextEditingController controller, String label, { bool isPassword = false, TextInputType keyboardType = TextInputType.text}) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white60),
+        labelStyle: TextStyle(color: Colors.green),
         filled: true,
-        fillColor: Colors.grey[800],
+        fillColor: Colors.grey[300],
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide(color: Colors.transparent),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.amber),
+          borderSide: BorderSide(color: Colors.green),
         ),
       ),
       obscureText: isPassword,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.green),
     );
   }
 

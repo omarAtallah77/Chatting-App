@@ -1,178 +1,302 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled/firebase/ChatService.dart';
 import 'package:untitled/firebase/auth_service.dart';
-import 'package:untitled/models/user_tile.dart';
+import 'package:untitled/screens/about.dart';
+import 'package:untitled/screens/questions.dart';
+import 'package:untitled/screens/recycle_screen.dart';
+import 'package:untitled/screens/tracking.dart';
+import 'activitty.dart';
 import 'chat_screen_2.dart';
 import 'sign_in_screen.dart';
+import 'profile.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
+
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _emailController = TextEditingController();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final ChatService _chatService = ChatService();
+  //final AuthService _authService = AuthService();
+  int _currentIndex = 0;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final ChatService _chatService = ChatService();
 
-  final AuthService _authService = AuthService();
-
-  void initState ()
-  {
+  @override
+  void initState() {
     super.initState();
-    getTokn();
+   Profile();
   }
+
+
+  final List<Widget> _screens = [
+    HomeContent(), // Home Page Content
+    ActivityScreen(),
+    RecycleScreen(),
+    ChatScreen_2(receiverEmail: 'Customer Service', receiverID: '') ,
+    Profile()
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
-      appBar: AppBar(
-        backgroundColor: Colors.black87,
-        title: Text('Chats', style: TextStyle(color: Colors.amber, fontSize: 26.0)),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.amber),
-            onPressed: () async {
-              await _auth.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => SignInScreen()),
-              );
-            },
-          ),
+      bottomNavigationBar: CurvedNavigationBar(
+        buttonBackgroundColor: Colors.green[200],
+        backgroundColor: Colors.green,
+        items: <Widget>[
+          Icon(Icons.home, size: 30),
+          Icon(Icons.list_alt_rounded, size: 30),
+          Icon(Icons.recycling_outlined, size: 30),
+          Icon(Icons.chat, size: 30),
+          Icon(Icons.person, size: 30),
         ],
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
-      body: _builderUserList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showSearchDialog(context),
-        child: Icon(Icons.search),
-        backgroundColor: Colors.amber,
-      ),
+      backgroundColor: Colors.white,
+      body: _screens[_currentIndex],
     );
   }
+}
 
-  Widget _builderUserList() {
-    return StreamBuilder<List<Map<String, dynamic>>>(
-      stream: _chatService.getuserStream(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text("Error");
+class HomeContent extends StatefulWidget {
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+
+class _HomeContentState extends State<HomeContent> {
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser() ;
+
+  }
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String ? userEmail ;
+  String? firstName ;
+  String? lastName ;
+
+  void getCurrentUser() async {
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      if (mounted) {
+        setState(() {
+          userEmail = user.email; // Get email from FirebaseAuth
+        });
+      }
+
+      await _firestore.collection('users').doc(user.uid).get().then((doc) {
+        if (doc.exists) {
+          if (mounted) {
+            setState(() {
+              firstName = doc.data()?['firstName'];
+              lastName = doc.data()?['lastName'];
+            });
+          }
         }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
-        }
-        return Container(
-          color: Colors.black12,
-          child: ListView(
-
-            children: snapshot.data!.map<Widget>((userData) => _builderUserListItem(userData, context)).toList(),
-          ),
-        );
-      },
-    );
+      });
+    }
   }
 
-  Widget _builderUserListItem(Map<String, dynamic> userData, BuildContext context) {
-    return UserTile(
-      text: userData["email"],
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            ChatScreen_2(
-              receiverEmail: userData["email"],
-              receiverID: userData["uid"],
-            ),),);
-      },
-    );
-  }
 
-  void _showSearchDialog(BuildContext context) {
-    showDialog(
-      barrierColor: Colors.black87,
-      context: context,
-      builder: (context) {
-
-        return Center(
-          child: ListView(
-
-              children: [ AlertDialog(
-                backgroundColor: Colors.black87,
-                title: Text('Search User by Email' , style: TextStyle(color: Colors.amber),),
-                content: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(hintText: "Enter email" ),
-                  style: TextStyle(color: Colors.white),
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.asset(
+          'assets/home.jpg',
+          fit: BoxFit.cover,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 60.0),
+              Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(
+                    right: Radius.circular(10.0),
+                    left: Radius.circular(10.0),
+                  ),
+                  color: Colors.white,
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () async {
-                      String emailToSearch = _emailController.text.trim();
-                      QuerySnapshot snapshot = await _firestore
-                          .collection("Users")
-                          .where("email", isEqualTo: emailToSearch)
-                          .get();
-
-                      if (snapshot.docs.isNotEmpty) {
-                        // If the user is found, get the user ID and email
-                        String receiverID = snapshot.docs.first.id; // Get the receiver ID
-
-                        // Check if chat room exists
-                        List<String> ids = [_auth.currentUser!.uid, receiverID];
-                        ids.sort();
-                        String chatRoomID = ids.join('_');
-
-                        DocumentSnapshot chatRoomSnapshot = await _firestore
-                            .collection("chat_rooms")
-                            .doc(chatRoomID)
-                            .get();
-
-                        if (!chatRoomSnapshot.exists) {
-                          // If the chat room doesn't exist, create it
-                          await _firestore.collection("chat_rooms").doc(chatRoomID).set({
-                            "participants": ids, // Store participants in the chat room
-                          });
-                        }
-
-                        // Navigate to chat screen
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            ChatScreen_2(
-                              receiverEmail: emailToSearch,
-                              receiverID: receiverID,
-                            ),
-                        ));
-                      } else {
-                        // If the user is not found, show a message
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('User not found')),
-                        );
-                      }
-                      _emailController.clear(); // Clear the text field
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: Text('Search' , style: TextStyle(color: Colors.amber)),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Cancel' , style: TextStyle(color: Colors.white60)),
-                  ),
-                ],
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 40.0,
+                      child: Image.asset(
+                        'assets/logo1-removebg-preview.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(width: 10.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('$firstName $lastName' ?? "Loading..."  ,
+                          style: TextStyle(
+                            color: Color.fromRGBO(15, 255, 80, 1.0),
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '$userEmail '?? "Loading...",
+                          style: TextStyle(
+                            color: Colors.lightGreen,
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              ]),
-        );
-      },
+              SizedBox(height: 40.0),
+              Center(
+                child: Text(
+                  'Selection',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              MenuButton(icon: Icons.recycling, text: "Go Recycle", color: Colors.lightGreen[100], iconColor: Colors.green , index: 1 ),
+              MenuButton(icon: Icons.location_on, text: "Live Tracking", color: Colors.red[100], iconColor: Colors.red, index: 2),
+              MenuButton(icon: Icons.shopping_cart_outlined, text: "Shopping", color: Colors.orange[100], iconColor: Colors.orange , index: 3 ,),
+              Container(
+                width: double.infinity,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(
+                    right: Radius.circular(20.0),
+                    left: Radius.circular(20.0),
+                  ),
+                  color: Colors.purple[100],
+                ),
+                child: MaterialButton(
+                  onPressed: (){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => RecycleScreen(donate: true , title: "Donation",)),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/donate-icon.png',
+                        fit: BoxFit.cover,
+                        width: 30.0,
+                      ),
+                      Expanded(
+                        child: Center(
+
+                          child: Text(
+                            'Donation',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            SizedBox(height: 15.0,),
+              MenuButton(icon: Icons.messenger_outline_rounded, text: "FAQ", color: Colors.blue[100], iconColor: Colors.blue , index: 4,),
+              MenuButton(icon: Icons.info_outlined, text: "About Us", color: Colors.grey[300], iconColor: Colors.black , index: 5,),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class MenuButton extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color? color;
+  final Color iconColor;
+   final int ? index  ;
+
+  MenuButton({required this.icon, required this.text, required this.color, required this.iconColor , required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Container(
+        width: double.infinity,
+        height: 50.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.horizontal(
+            right: Radius.circular(20.0),
+            left: Radius.circular(20.0),
+          ),
+          color: color,
+        ),
+        child: MaterialButton(
+          onPressed: () {
+            if (index ==4 ) {  Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => questions()),
+            );;}
+            else if (index == 5 ) {Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => about()),
+            );}
+            else if (index == 2 ){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => tracking()),
+              );
+            }
+            else if (index == 1 ) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => RecycleScreen  (donate: false,)),
+              );
+            }
+          },
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    text,
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  getTokn () async {
-    String?  mytoken = await FirebaseMessaging.instance.getToken();
-    print("===========================================================");
-    print(mytoken);
-  }
 }

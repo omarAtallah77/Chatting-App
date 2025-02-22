@@ -57,15 +57,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.white,
         title: Text(
           'Reset Password',
-          style: TextStyle(color: Colors.amber),
+          style: TextStyle(color: Colors.green),
         ),
           leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.amber), // Back icon
+              icon: Icon(Icons.arrow_back, color: Colors.green), // Back icon
               onPressed: () => Navigator.of(context).pushReplacementNamed('/signin') )),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,25 +77,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: "Email",
-                labelStyle: TextStyle(color: Colors.white60),
+                labelStyle: TextStyle(color: Colors.green),
                 filled: true,
-                fillColor: Colors.grey[800],
+                fillColor: Colors.grey[300],
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: Colors.amber),
+                  borderSide: BorderSide(color: Colors.green),
                 ),
               ),
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.green),
             ),
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: _resetPassword,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
+                backgroundColor:Colors.green,
                 textStyle: TextStyle(color: Colors.white60),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
@@ -110,7 +110,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             SizedBox(height: 25),
             Text(
               _message,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
             ),
           ],
         ),

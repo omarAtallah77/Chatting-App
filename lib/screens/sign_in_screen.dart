@@ -17,11 +17,11 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Sign In", style: TextStyle(color: Colors.amber)),
-        backgroundColor: Colors.black87,
+        title: Text("Sign In", style: TextStyle(color: Colors.green)),
+        backgroundColor: Colors.white,
       ),
       body: ModalProgressHUD(
         inAsyncCall: _saving,
@@ -37,19 +37,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    labelStyle: TextStyle(color: Colors.white60),
+                    labelStyle: TextStyle(color: Colors.green),
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: Colors.grey[300],
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.amber),
+                      borderSide: BorderSide(color: Colors.green),
                     ),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.green),
                 ),
                 SizedBox(height: 20),
 
@@ -58,20 +58,20 @@ class _SignInScreenState extends State<SignInScreen> {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    labelStyle: TextStyle(color: Colors.white60),
+                    labelStyle: TextStyle(color: Colors.green),
                     filled: true,
-                    fillColor: Colors.grey[800],
+                    fillColor: Colors.grey[300],
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.amber),
+                      borderSide: BorderSide(color: Colors.green),
                     ),
                   ),
                   obscureText: true,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.green),
                 ),
                 SizedBox(height: 10),
 
@@ -94,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     setState(() => _saving = true);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
+                    backgroundColor: Colors.green,
                     textStyle: TextStyle(color: Colors.white60),
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
@@ -115,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                   child: Text(
                     "Don't have an account? Register here",
-                    style: TextStyle(color: Colors.amber),
+                    style: TextStyle(color: Colors.green),
                   ),
                 ),
               ],
